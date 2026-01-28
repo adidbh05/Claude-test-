@@ -32,3 +32,6 @@ httpx>=0.26.0
 
 # Optional: For production
 gunicorn>=21.2.0
+
+# Database ORM
+sqlalchemy>=2.0.25
