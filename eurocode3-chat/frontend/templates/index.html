@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eurocode 3 | Structural Design Assistant</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- KaTeX for math rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="2" y="8" width="36" height="4" rx="1" fill="currentColor"/>
+                            <rect x="6" y="8" width="4" height="24" fill="currentColor"/>
+                            <rect x="30" y="8" width="4" height="24" fill="currentColor"/>
+                            <rect x="2" y="28" width="36" height="4" rx="1" fill="currentColor"/>
+                            <rect x="16" y="12" width="8" height="16" fill="currentColor" opacity="0.5"/>
+                        </svg>
+                    </div>
+                    <div class="logo-text">
+                        <span class="logo-title">EC3 Design</span>
+                        <span class="logo-subtitle">Structural Assistant</span>
+                    </div>
+                </div>
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+
+            <button class="new-chat-btn" id="newChatBtn">
+                <i class="fas fa-plus"></i>
+                <span>New Calculation</span>
+            </button>
+
+            <div class="conversations-section">
+                <div class="section-header">
+                    <i class="fas fa-history"></i>
+                    <span>History</span>
+                </div>
+                <div class="conversations-list" id="conversationsList">
+                    <!-- Conversations loaded dynamically -->
+                </div>
+            </div>
+
+            <div class="sidebar-footer">
+                <div class="eurocode-badge">
+                    <span class="badge-label">Standard</span>
+                    <span class="badge-value">EN 1993</span>
+                </div>
+                <div class="rate-limit-info" id="rateLimitInfo">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span id="rateLimitText">-- requests remaining</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="main-header">
+                <div class="header-left">
+                    <button class="mobile-menu-btn" id="mobileMenuBtn">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1 class="page-title" id="pageTitle">New Calculation</h1>
+                </div>
+                <div class="header-right">
+                    <div class="steel-grade-selector">
+                        <label>Steel Grade:</label>
+                        <select id="steelGrade">
+                            <option value="S235">S235</option>
+                            <option value="S275">S275</option>
+                            <option value="S355" selected>S355</option>
+                            <option value="S420">S420</option>
+                            <option value="S460">S460</option>
+                        </select>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Chat Container -->
+            <div class="chat-container" id="chatContainer">
+                <!-- Welcome Screen -->
+                <div class="welcome-screen" id="welcomeScreen">
+                    <div class="welcome-content">
+                        <div class="welcome-icon">
+                            <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="4" y="16" width="72" height="6" rx="2" fill="currentColor"/>
+                                <rect x="12" y="16" width="8" height="48" fill="currentColor"/>
+                                <rect x="60" y="16" width="8" height="48" fill="currentColor"/>
+                                <rect x="4" y="58" width="72" height="6" rx="2" fill="currentColor"/>
+                                <rect x="32" y="22" width="16" height="36" fill="currentColor" opacity="0.3"/>
+                                <path d="M40 35 L46 45 H34 Z" fill="currentColor" opacity="0.6"/>
+                            </svg>
+                        </div>
+                        <h2>Eurocode 3 Design Assistant</h2>
+                        <p class="welcome-description">
+                            Expert assistance for steel structural design according to EN 1993.
+                            Get help with calculations, code references, and design checks.
+                        </p>
+
+                        <div class="quick-actions">
+                            <h3>Quick Start</h3>
+                            <div class="action-grid">
+                                <button class="action-card" data-prompt="Calculate the bending resistance of an IPE 300 beam in S355 steel">
+                                    <i class="fas fa-ruler-combined"></i>
+                                    <span>Beam Resistance</span>
+                                </button>
+                                <button class="action-card" data-prompt="Check flexural buckling for an HEB 200 column with effective length 4m, axial load 800kN, S355 steel">
+                                    <i class="fas fa-compress-arrows-alt"></i>
+                                    <span>Column Buckling</span>
+                                </button>
+                                <button class="action-card" data-prompt="Design a fillet weld connection for a 200kN shear force, S355 steel, 10mm plate thickness">
+                                    <i class="fas fa-link"></i>
+                                    <span>Weld Design</span>
+                                </button>
+                                <button class="action-card" data-prompt="Classify an IPE 400 cross-section in S355 steel under combined bending and compression">
+                                    <i class="fas fa-th-large"></i>
+                                    <span>Section Class</span>
+                                </button>
+                                <button class="action-card" data-prompt="Design a bolted end plate connection for a moment of 150 kNm using M20 8.8 bolts">
+                                    <i class="fas fa-dot-circle"></i>
+                                    <span>Bolt Connection</span>
+                                </button>
+                                <button class="action-card" data-prompt="Check lateral-torsional buckling for an IPE 360 beam, span 6m, uniformly distributed load">
+                                    <i class="fas fa-arrows-alt-h"></i>
+                                    <span>LTB Check</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="capabilities">
+                            <h3>Capabilities</h3>
+                            <div class="capability-list">
+                                <div class="capability-item">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span>Cross-section classification (Class 1-4)</span>
+                                </div>
+                                <div class="capability-item">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span>Resistance calculations (tension, compression, bending, shear)</span>
+                                </div>
+                                <div class="capability-item">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span>Stability checks (flexural, lateral-torsional buckling)</span>
+                                </div>
+                                <div class="capability-item">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span>Connection design (bolted and welded)</span>
+                                </div>
+                                <div class="capability-item">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span>Code references with clause numbers</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Messages Container -->
+                <div class="messages-container" id="messagesContainer">
+                    <!-- Messages loaded dynamically -->
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div class="input-area">
+                <div class="input-container">
+                    <div class="input-wrapper">
+                        <textarea
+                            id="messageInput"
+                            placeholder="Ask about steel design, e.g., 'Calculate the shear resistance of an IPE 300...'"
+                            rows="1"
+                        ></textarea>
+                        <button class="send-btn" id="sendBtn" disabled>
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                    <div class="input-footer">
+                        <span class="disclaimer">
+                            <i class="fas fa-info-circle"></i>
+                            All calculations should be verified by a qualified structural engineer
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner">
+            <div class="beam-animation">
+                <div class="beam"></div>
+                <div class="load-arrow"></div>
+            </div>
+            <span>Calculating...</span>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="/static/js/app.js"></script>
+    <script src="/static/js/marked.min.js"></script>
+</body>
+</html>
