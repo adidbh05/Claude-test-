@@ -10,6 +10,9 @@ from datetime import datetime
 from contextlib import asynccontextmanager
 from typing import Optional
 
+from dotenv import load_dotenv
+load_dotenv(os.path.join(os.path.dirname(__file__), '..', '.env'))
+
 from fastapi import FastAPI, HTTPException, status, Request, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -55,7 +58,10 @@ if USE_MOCK_LLM:
     llm_service = MockLLMService()
     logger.info("Using Mock LLM Service for development")
 else:
-    llm_service = LLMService(provider=LLM_PROVIDER)
+    llm_service = LLMService(
+        provider=LLM_PROVIDER,
+        api_key=os.getenv("PERPLEXITY_API_KEY") if LLM_PROVIDER == "perplexity" else None
+    )
     logger.info(f"Using {LLM_PROVIDER} LLM Service")
 
 

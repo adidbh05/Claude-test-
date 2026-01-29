@@ -87,7 +87,7 @@ class LLMService:
         provider: str = "openai"
     ):
         self.provider = provider.lower()
-        self.api_key = api_key or os.getenv("OPENAI_API_KEY") or os.getenv("ANTHROPIC_API_KEY")
+        self.api_key = api_key or os.getenv("PERPLEXITY_API_KEY") or os.getenv("OPENAI_API_KEY") or os.getenv("ANTHROPIC_API_KEY")
         self.api_base = api_base or self._get_default_base()
         self.model = model or self._get_default_model()
         self.system_prompt = EUROCODE3_SYSTEM_PROMPT
@@ -97,6 +97,7 @@ class LLMService:
         bases = {
             "openai": "https://api.openai.com/v1",
             "anthropic": "https://api.anthropic.com/v1",
+            "perplexity": "https://api.perplexity.ai",
             "ollama": "http://localhost:11434/v1",
             "local": "http://localhost:8080/v1"
         }
@@ -107,6 +108,7 @@ class LLMService:
         models = {
             "openai": "gpt-4-turbo-preview",
             "anthropic": "claude-3-sonnet-20240229",
+            "perplexity": "sonar-pro",
             "ollama": "llama2",
             "local": "local-model"
         }
@@ -224,8 +226,8 @@ class LLMService:
         try:
             # Simple ping to check API availability
             async with httpx.AsyncClient(timeout=10.0) as client:
-                if self.provider == "anthropic":
-                    # Anthropic doesn't have a simple health endpoint
+                if self.provider in ("anthropic", "perplexity"):
+                    # These providers don't have a simple health endpoint
                     return True  # Assume healthy if configured
                 else:
                     response = await client.get(f"{self.api_base}/models")

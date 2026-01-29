@@ -24,6 +24,7 @@ class Settings(BaseSettings):
     llm_provider: str = "openai"
     openai_api_key: Optional[str] = None
     anthropic_api_key: Optional[str] = None
+    perplexity_api_key: Optional[str] = None
     api_base_url: Optional[str] = None
     llm_model: Optional[str] = None
 
