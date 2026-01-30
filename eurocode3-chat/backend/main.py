@@ -31,6 +31,10 @@ from app.models import (
 from database.memory import ConversationMemory
 from services.llm_service import LLMService, MockLLMService, LLMServiceError
 from middleware.rate_limiter import RateLimitMiddleware, RateLimiter
+from app.tool_routes import (
+    sections_router, calc_router, loads_router,
+    na_router, projects_router, saved_router, report_router,
+)
 
 # Configure logging
 logging.basicConfig(
@@ -77,21 +81,23 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="Eurocode 3 Structural Design Chat",
     description="""
-    An AI-powered chat application specialized in steel structural design
+    An AI-powered engineering platform for steel structural design
     according to Eurocode 3 (EN 1993).
 
-    ## Features
-    - Expert knowledge of EN 1993-1-1 through EN 1993-1-12
-    - Cross-section classification and resistance calculations
-    - Buckling analysis (flexural, lateral-torsional)
-    - Connection design (bolted and welded)
-    - Step-by-step calculations with clause references
+    ## Chat
+    - Expert AI assistant with EN 1993 knowledge
+    - Conversation memory with project grouping
 
-    ## Rate Limits
-    - 30 requests per minute
-    - 500 requests per hour
+    ## Engineering Tools
+    - **Section Database**: IPE, HEB, HEA, UPN, CHS, RHS/SHS, Angles
+    - **Calculators**: Beam, column, classification, deflection, fire
+    - **Connections**: Bolt shear/tension/combined, fillet welds
+    - **Load Combinations**: EN 1990 ULS (6.10 / 6.10a+b) and SLS
+    - **National Annexes**: 15 countries with NA-specific parameters
+    - **Projects**: Group conversations and saved calculations
+    - **Reports**: Exportable HTML calculation sheets
     """,
-    version="1.0.0",
+    version="2.0.0",
     lifespan=lifespan,
     responses={
         429: {"model": ErrorResponse, "description": "Rate limit exceeded"},
@@ -326,6 +332,16 @@ async def get_rate_limit_info(request: Request):
         reset_time=datetime.utcnow(),
         limit=rate_limiter.requests_per_minute
     )
+
+
+# ============== Register Tool Routers ==============
+app.include_router(sections_router)
+app.include_router(calc_router)
+app.include_router(loads_router)
+app.include_router(na_router)
+app.include_router(projects_router)
+app.include_router(saved_router)
+app.include_router(report_router)
 
 
 # Run with: uvicorn main:app --reload --port 8000
